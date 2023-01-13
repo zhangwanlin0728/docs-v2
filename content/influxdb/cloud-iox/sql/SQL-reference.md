@@ -178,33 +178,31 @@ Comparison operators compare numbers or strings and perform evaluations.
 | Keyword         | Description                                                                                                                                                                                                                      |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | AND             | Include columns where all conditions are true                                                                                                                                                                                    |
-| AS              | Renames a column with an alias.  Use in `CAST` operations.                                                                                                                                                                                                   |
+| AS              | Renames a column with an alias.  Use in `CAST` operations.                                                                                                                                                                       |
 | ASC             | Sorts query results in ascending order                                                                                                                                                                                           |
 | DESC            | Sorts query results in descending order                                                                                                                                                                                          |
 | DISTINCT        | Selects only distinct values                                                                                                                                                                                                     |
 | EXISTS          | Find all rows in a relation where a correlated subquery produces one or more matches for that row. Only correlated subqueries are supported.                                                                                     |
-| EXPLAIN         | Shows the logical and physical execution plan for a specified SQL statement                                                                                                                                                      |
-| FROM            | Specifies the measurement from which to select data                                                                                                                                                                              |
-| GROUP BY        | Groups results by aggregate function                                                                                                                                                                                             |
-| HAVING          | Places conditions on results created by the GROUP BY clause                                                                                                                                                                      |
-| IN              | Find all rows in a relation where a given expression’s value can be found in the results of a correlated subquery                                                                                                                |
+| EXPLAIN         | Shows the logical and physical execution plan for a specified SQL statement.                                                                                                                                                     |
+| FROM            | Specifies the measurement from which to select data.                                                                                                                                                                             |
+| GROUP BY        | Groups results by aggregate function.                                                                                                                                                                                            |
+| HAVING          | Places conditions on results created by the GROUP BY clause.                                                                                                                                                                     |
+| IN              | Find all rows in a relation where a given expression’s value can be found in the results of a correlated subquery .                                                                                                              |
 | INNER JOIN      | A join that only returns rows where there is a match in both tables                                                                                                                                                              |
-| IS NULL         |                                                                                                                                                                                                                                  |
-| IS NOT NULL     |                                                                                                                                                                                                                                  |
 | JOIN            | Combines results from two or more tables into one data set                                                                                                                                                                       |
-| LEFT JOIN       |                                                                                                                                                                                                                                  |
+| LEFT JOIN       | Gathers data from all rows in the left table regardless of whether there is a match in the right table.                                                                                                                          |
 | LIMIT           | Limits the number of rows in the result.                                                                                                                                                                                         |
-| NOT EXISTS      |                                                                                                                                                                                                                                  |
+| NOT EXISTS      | Find all rows in a relation where a correlated subquery produces zero matches for that row. Only correlated subqueries are supported.                                                                                            |
 | NOT IN          | Find all rows in a relation where a given expression’s value can not be found in the results of a correlated subquery.                                                                                                           |
-| OR              |                                                                                                                                                                                                                                  |
-| ORDER BY        | Orders results by the referenced expression                                                                                                                                                                                      |
+| OR              | Operator used to test one or more conditions and return a result where the condition is met. Use with the `WHERE` clause.                                                                                                        |
+| ORDER BY        | Orders results by the referenced expression.                                                                                                                                                                                     |
 | FULL OUTER JOIN | A join that is effectively a union of a LEFT OUTER JOIN and RIGHT OUTER JOIN. It will show all rows from the left and right side of the join and will produce null values on either side of the join where there is not a match. |
-| RIGHT JOIN      | A join that includes all rows from the right table even if there is not a match in the left table. When there is no match, null values are produced for the left side of the join                                                |
-| SELECT          | Retrieves rows from a table (measurement)                                                                                                                                                                                        |
-| SELECT DISTINCT | Returns only distinct (different) values                                                                                                                                                                                         |
+| RIGHT JOIN      | A join that includes all rows from the right table even if there is not a match in the left table. When there is no match, null values are produced for the left side of the join.                                               |
+| SELECT          | Retrieves rows from a table (measurement).                                                                                                                                                                                       |
+| SELECT DISTINCT | Returns only distinct (different) values from a table (measurement).                                                                                                                                                             |
 | UNION           | Used to combine the result set of at least two queries.                                                                                                                                                                          |
-| WHERE           | Used o filter results based on fields, tags, and/or timestamps.  |
-| WITH            | Names the query and allows for referencing the query by the specified name. |
+| WHERE           | Used o filter results based on fields, tags, and/or timestamps.                                                                                                                                                                  |
+| WITH            | Names the query and allows for referencing the query by the specified name.                                                                                                                                                      |
 
 ## Statements and clauses
 
@@ -275,9 +273,7 @@ Use the JOIN clause to join data from multiple measurments (tables).  The follow
 {{< /flex-content >}}
 {{< /flex >}}
 
-
 The INNER JOIN clause gathers data where there is a match between the two measurements being joined.
-
 
 ```sql
 SELECT *
@@ -312,15 +308,9 @@ FULL JOIN h2o_temperature
 ON h2o_feet.location = h2o_temperature.location AND h2o_feet.time = h2o_temperature.time
 ```
 
-<!-- The results returned will differ depending on the type of JOIN you use.  
-
-The LEFT INNER JOIN query produces 15258 rows. 
-The RIGHT OUTER JOIN query produces 7604 rows.
-The FULL OUTER JOIN query also produces 15258 rows. -->
-
 ### The GROUP BY clause 
 
-Use the `GROUP BY` clause to group query results based on specified tag keys and/or a specified time interval. `GROUP BY` requires an aggregate or selector function in the `SELECT` statement.
+Use the `GROUP BY` clause to group query results based on specified tag keys and/or a specified time interval. `GROUP BY` **requires** an aggregate or selector function in the `SELECT` statement.
 
 #### Examples
 
@@ -429,9 +419,9 @@ FROM "h2o_feet"
 
 ## Functions
 
-InfluxDB SQL supports a wide variety of functions. 
+Following is a list of supported fucntions. 
 
-### Aggregates
+### Aggregate
 
 An aggregate function performs a calculation on a set of data values in a column and returns a single value.  
 
@@ -441,10 +431,8 @@ An aggregate function performs a calculation on a set of data values in a column
 | AVG()    | Returns the average value of a column                      |
 | SUM()    | Returns the summed value of a column                       |
 | MEAN()   | Returns the mean value of a column                         |
-| MIN()    |                                                            |
-| MAX()    |                                                            |
-|          |                                                            |
-
+| MIN()    | Returns the smallest value of the selected column          |
+| MAX()    | Returns the largest value of the selected column          |
 
 #### Examples
 
@@ -503,9 +491,9 @@ GROUP BY time
 | Function      | Description                                    |
 | :------------ | :--------------------------------------------- |
 | APPROX_MEDIAN | Returns the approximate median of input values |
-|               |                                                |
 
-<!-- ### Math functions
+
+### Math functions
 
 | Function | Description                                                                      |
 | :------- | :------------------------------------------------------------------------------- |
@@ -527,6 +515,6 @@ GROUP BY time
 | SINE()   | sine                                                                             |
 | SQRT()   | returns the square root of a number                                              |
 | TAN()    | tangent                                                                          |
-| TRUNC()  | truncates a number to the specified number of decimal places                     | -->
+| TRUNC()  | truncates a number to the specified number of decimal places                     |
 
 
