@@ -11,19 +11,58 @@ weight: 190
 
 InfluxDB Cloud backed by InfluxDB IOx uses the Apache Arrow DataFusion implementation of SQL.  
 
-[Identifiers](#)
-[Quoting](#)
-[Case sensitivity](#)
-[Duration units](#)
-[Operators](#)
-[SQL keywords](#)
-[Statements and clauses](#)
-[Comments](#)
-[Functions](#)
+[Identifiers](#identifiers)  
+[Quoting and case sensitivity](#)  
+[Literals](#literals)  
+[Duration units](#)  
+[Operators](#)  
+[SQL keywords](#)  
+[Statements and clauses](#)  
+[Comments](#)  
+[Functions](#)  
 
 ## Identifiers
 
-An identifier is the name of an object, such as a [`bucket`](/cloud/reference/glossary/#bucket) name (database name), `measurement` name, `tag key`, and `field key`.
+An identifier is the name of an object, such as a `bucket` name, `measurement` name, `tag`, and `field`.
+
+## Quoting and case sensitivity
+
+Rules for quoting:
+
+- Single quote time durations (excluding Unix epoch).
+- Double quote database identifiers (column names).
+- Names using mixed case or [camel case](https://en.wikipedia.org/wiki/Camel_case) must be in double quotes.
+- If an identifier contains whitespace it must be in double quotes.
+- Unquoted identifiers are not case sensitive. 
+
+```sql
+-- Examples
+SELECT * FROM "water temperature"
+SELECT * FROM "water_temperature"
+SELECT "pH"
+```
+
+{{% note %}}
+**Note:** Not all identifiers require double quotes.  The following queries will still both return results:
+
+```sql
+SELECT location, water_level 
+  FROM h2o_feet
+
+SELECT "location","water_level" 
+  FROM "h2o_feet"
+
+```
+{{% /note %}}
+
+ When a table is created, the case of a column is automaitcally stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
+
+ The following query will fail if the measurement `h2o-pH` and the field `pH` are not double quoted:
+
+ ```sql
+SELECT "pH", location, time
+FROM "h2o_pH"
+```
 
 ## Literals
 
@@ -31,11 +70,12 @@ Literals are the same as constants.
 
 ### String literals
 
-String literals must be surrounded by single quotes. 
+String literals must be surrounded by double quotes. 
 
 ```sql
-'santa_monica'
-'pH'
+"santa_monica"
+"pH"
+"average temperature"  
 ```
 
 ### Number literals
@@ -78,46 +118,6 @@ All dates and times in RFC3339 and RFC3339-like format must be in single quotes.
  ### Boolean literals
 
 Boolean literals are either TRUE or FALSE. 
-
-## Quoting
-
-Rules for quoting:
-
-- Always single quote string literals.
-- Single quote time durations (excluding Unix epoch).
-- Double quote database identifiers (column names).
-- Names using camel case (camelCase) must be in double quotes.
-
-{{% note %}}
-**Note:** Not all identifiers require double quotes.  
-{{% /note %}}
-
-The following queries will still both return results:
-
-```sql
-SELECT location, water_level 
-  FROM h2o_feet
-
-SELECT "location","water_level" 
-  FROM "h2o_feet"
-```
-Unquoted identifiers are not case sensitive. 
-
-## Case sensitivity
-
-Key points to keep in mind when working with InfluxDB SQL:
-
- - Column names in a query are not case sensitive **unless** they are quoted.  
- - Names using mixed case or [camel case](https://en.wikipedia.org/wiki/Camel_case) must be in double quotes.
-
- When a table is created, the case of a column is automaitcally stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
-
- The following query will fail if the measurement `h2o-pH` and the field `pH` are not double quoted:
-
- ```sql
-SELECT "pH", location, time
-FROM "h2o_pH"
-```
 
 ## Duration units
 
@@ -177,19 +177,21 @@ Comparison operators compare numbers or strings and perform evaluations.
 
 | Keyword         | Description                                                                                                                                                                                                                      |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| AND             | Include columns where all conditions are true                                                                                                                                                                                    |
+| AND             | Operator which includes columns where all conditions are true. Use with the `WHERE` clause.                                                                                                                                      |
+| ALL             | Returns boolean TRUE if all subquery values have met the specified condition.                                                                                                                                                    |
 | AS              | Renames a column with an alias.  Use in `CAST` operations.                                                                                                                                                                       |
-| ASC             | Sorts query results in ascending order                                                                                                                                                                                           |
-| DESC            | Sorts query results in descending order                                                                                                                                                                                          |
-| DISTINCT        | Selects only distinct values                                                                                                                                                                                                     |
+| ASC             | Sorts query results in ascending order.                                                                                                                                                                                          |
+| BOTTOM           |  Specifies the bootom number of records to return.                                                                                                                             
+| DESC            | Sorts query results in descending order.                                                                                                                                                                                         |
+| DISTINCT        | Selects only distinct values.                                                                                                                                                                                                    |
 | EXISTS          | Find all rows in a relation where a correlated subquery produces one or more matches for that row. Only correlated subqueries are supported.                                                                                     |
 | EXPLAIN         | Shows the logical and physical execution plan for a specified SQL statement.                                                                                                                                                     |
 | FROM            | Specifies the measurement from which to select data.                                                                                                                                                                             |
 | GROUP BY        | Groups results by aggregate function.                                                                                                                                                                                            |
 | HAVING          | Places conditions on results created by the GROUP BY clause.                                                                                                                                                                     |
 | IN              | Find all rows in a relation where a given expression’s value can be found in the results of a correlated subquery .                                                                                                              |
-| INNER JOIN      | A join that only returns rows where there is a match in both tables                                                                                                                                                              |
-| JOIN            | Combines results from two or more tables into one data set                                                                                                                                                                       |
+| INNER JOIN      | A join that only returns rows where there is a match in both tables .                                                                                                                                                            |
+| JOIN            | Combines results from two or more tables into one data set.                                                                                                                                                                      |
 | LEFT JOIN       | Gathers data from all rows in the left table regardless of whether there is a match in the right table.                                                                                                                          |
 | LIMIT           | Limits the number of rows in the result.                                                                                                                                                                                         |
 | NOT EXISTS      | Find all rows in a relation where a correlated subquery produces zero matches for that row. Only correlated subqueries are supported.                                                                                            |
@@ -200,7 +202,10 @@ Comparison operators compare numbers or strings and perform evaluations.
 | RIGHT JOIN      | A join that includes all rows from the right table even if there is not a match in the left table. When there is no match, null values are produced for the left side of the join.                                               |
 | SELECT          | Retrieves rows from a table (measurement).                                                                                                                                                                                       |
 | SELECT DISTINCT | Returns only distinct (different) values from a table (measurement).                                                                                                                                                             |
-| UNION           | Used to combine the result set of at least two queries.                                                                                                                                                                          |
+| TOP             | Specifies the top number of records to return.                                                                                                                                                                                                                                 |
+| TYPE            | Groups by common charactersistics.                                                                                                                                                                                                                                 |
+| UNION           | Used to combine the result set of at least two queries. Keeps only unique records.                                                                                                                                               |
+| UNION  ALL      | Like UNION, but keeps all records, including duplicates.                                                                                                                                                                         |
 | WHERE           | Used o filter results based on fields, tags, and/or timestamps.                                                                                                                                                                  |
 | WITH            | Names the query and allows for referencing the query by the specified name.                                                                                                                                                      |
 
@@ -341,7 +346,7 @@ ORDER BY "time"
 
 ### The UNION clause
 
-The `UNION` clause combines the results of two or more SELECT statements without returning any duplicate rows.
+The `UNION` clause combines the results of two or more SELECT statements without returning any duplicate rows. `UNION ALL` returns all results, including duplicates. 
 
 #### Examples
 
@@ -480,7 +485,7 @@ SUM(water_level)
 FROM "h2o_feet"
 GROUP BY time
 
-SELECT date_trunc('month',time) AS "date",
+SELECT DATE_TRUNC('month',time) AS "date",
 SUM(water_level)
 FROM "h2o_feet"
 GROUP BY time

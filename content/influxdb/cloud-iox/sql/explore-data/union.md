@@ -29,10 +29,33 @@ SELECT
     c
 FROM table2
 
-Note:
-Union queries must have the same number of columns, (left is 1, right is 2)
+{{% note %}}
+**Note:** Union queries must have the same number of columns, (left is 1, right is 2)
+{{% /note %}}
 
-### Exxamples
+### Examples
+
+Simple `UNION` query:
+
+```sql
+SELECT 'pH', time
+FROM "h2o_pH"
+UNION
+SELECT "location", time
+FROM "h2o_quality"
+```
+
+Results:
+
+| time                     | pH  |
+| :----------------------- | :-- |
+| 2019-08-17T00:06:00.000Z | pH  |
+| 2019-08-17T00:12:00.000Z | pH  |
+| 2019-08-17T00:36:00.000Z | pH  |
+
+Note that when working with time you must specifiy `time` in **both** SQL queries.  
+
+Query using `UNION ALL`:
 
 ```sql
 SELECT 'pH'
@@ -44,7 +67,13 @@ FROM "h2o_quality"
  
 Results:
 
+ | pH           |
+ | :----------- |
+ | coyote_creek |
+ | pH           |
+ | santa_monica |
 
+`UNION ALL` query using an `OVER` clause:
 
 ```sql
 select 'bottom' as type, time, water_level from 
