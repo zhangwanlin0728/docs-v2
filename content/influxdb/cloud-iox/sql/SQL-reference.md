@@ -11,19 +11,19 @@ weight: 190
 
 InfluxDB Cloud backed by InfluxDB IOx uses the Apache Arrow DataFusion implementation of SQL.  
 
-[Identifiers](#identifiers)  
-[Quoting and case sensitivity](#)  
-[Literals](#literals)  
-[Duration units](#)  
-[Operators](#)  
-[SQL keywords](#)  
-[Statements and clauses](#)  
-[Comments](#)  
-[Functions](#)  
+- [SQL Identifiers](#identifiers)  
+- [Quoting and case sensitivity](#)  
+- [Literals](#literals)  
+- [Duration units](#)  
+- [Operators](#)  
+- [SQL keywords](#)  
+- [Statements and clauses](#)  
+- [Comments](#)  
+- [Functions](#)  
 
-## Identifiers
+## SQL Identifiers
 
-An identifier is the name of an object, such as a `bucket` name, `measurement` name, `tag`, and `field`.
+An identifier is a token which refers to the name of an InfluxDB database object, such as a `measurement`, `tag`, or `field`.
 
 ## Quoting and case sensitivity
 
@@ -43,19 +43,19 @@ SELECT "pH"
 ```
 
 {{% note %}}
-**Note:** Not all identifiers require double quotes.  The following queries will still both return results:
+**Note:** Not all identifiers require double quotes.  The following queries will both return results:
 
 ```sql
 SELECT location, water_level 
-  FROM h2o_feet
+FROM h2o_feet
 
 SELECT "location","water_level" 
-  FROM "h2o_feet"
+FROM "h2o_feet"
 
 ```
 {{% /note %}}
 
- When a table is created, the case of a column is automaitcally stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
+ When a table is created, the case of a column is automatically stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
 
  The following query will fail if the measurement `h2o-pH` and the field `pH` are not double quoted:
 
@@ -94,17 +94,17 @@ Number literals are positive or negative numbers that are either exact numbers o
 
 The following date and time literals are supported:
 
- - '2022-01-31T06:30:30.123Z' (RFC3339) 
- - '2022-01-31T06:30:30.123' (RFC3339-like)
- - '2022-01-31 06:30:30.123' (RFC3339-like)
- - '2022-01-31 06:30:30' ((RFC3339-like, no fractional seconds) 
+ - 2022-01-31T06:30:30.123Z (RFC3339) 
+ - 2022-01-31T06:30:30.123 (RFC3339-like)
+ - 2022-01-31 06:30:30.123 (RFC3339-like)
+ - 2022-01-31 06:30:30 ((RFC3339-like, no fractional seconds) 
  - 1567296000000000000 (Unix epoch nanosecond) - must cast to `::timestamp` in queries
  - 1566176400 (Unix epoch second) -  must cast to `::timestamp` in queries
 
-All dates and times in RFC3339 and RFC3339-like format must be in single quotes.  Unix epoch timestamps do not need quotes and must be cast to `::timestamp`.
+All dates and times in RFC3339 and RFC3339-like format must be in single quotes.  Unix epoch timestamps do not need any quotes and must be cast to `::timestamp`.
 
 ```sql
---RFCC3339 examples
+--RFC3339 examples
 '2019-09-01T00:00:00Z'::timestamp
 '2019-08-19T00:00:00.123Z'::TIMESTAMP
 '2019-09-03 00:12:00'
@@ -135,14 +135,14 @@ interval'400m'
 | :----------- | :----------------------- |
 | nanoseconds  | 1 billionth of a second  |
 | microseconds | 1 millionth of a second  |
-| miliseconds  | 1 thousandth of a second |
+| milliseconds | 1 thousandth of a second |
 | second       |                          |
-| minute       |                          |
-| hour         |                          |
-| day          |                          |
-| week         |                          |
+| minute       | 60 seconds               |
+| hour         | 60 minutes               |
+| day          | 24 hours                 |
+| week         | 7 days                   |
 | month        |                          |
-| year         |                          |
+| year         | 365 days                 |
 
 
 ## Operators
@@ -161,17 +161,17 @@ perform a calculation that returns a single numerical value.
 
 ### Comparison operators
 
-Comparison operators compare numbers or strings and perform evaluations.
+Comparison operators compare numbers or strings and perform evaluations. They are used in the `WHERE` clause.
 
-| Operator | Meaning                  |
-|:--------:|:--------                 |
-| `=`      | equal to                 |
-| `<>`     | not equal to             |
-| `!=`     | not equal to             |
-| `>`      | greater than             |
-| `>=`     | greater than or equal to |
-| `<`      | less than                |
-| `<=`     | less than or equal to    |
+| Operator | Meaning                  | Example    |
+| :------: | :----------------------- | :--------- |
+|   `=`    | equal to                 | 123 = 123  |
+|   `<>`   | not equal to             | 123 <> 456 |
+|   `!=`   | not equal to             | 123 != 456 |
+|   `>`    | greater than             | 3 > 2      |
+|   `>=`   | greater than or equal to | 3 >=2      |
+|   `<`    | less than                | 1 < 2      |
+|   `<=`   | less than or equal to    | 1<= 2      |
 
 ## SQL keywords
 
@@ -181,7 +181,7 @@ Comparison operators compare numbers or strings and perform evaluations.
 | ALL             | Returns boolean TRUE if all subquery values have met the specified condition.                                                                                                                                                    |
 | AS              | Renames a column with an alias.  Use in `CAST` operations.                                                                                                                                                                       |
 | ASC             | Sorts query results in ascending order.                                                                                                                                                                                          |
-| BOTTOM           |  Specifies the bootom number of records to return.                                                                                                                             
+| BOTTOM           |  Specifies the bottom number of records to return.                                                                                                                             
 | DESC            | Sorts query results in descending order.                                                                                                                                                                                         |
 | DISTINCT        | Selects only distinct values.                                                                                                                                                                                                    |
 | EXISTS          | Find all rows in a relation where a correlated subquery produces one or more matches for that row. Only correlated subqueries are supported.                                                                                     |
@@ -203,11 +203,11 @@ Comparison operators compare numbers or strings and perform evaluations.
 | SELECT          | Retrieves rows from a table (measurement).                                                                                                                                                                                       |
 | SELECT DISTINCT | Returns only distinct (different) values from a table (measurement).                                                                                                                                                             |
 | TOP             | Specifies the top number of records to return.                                                                                                                                                                                                                                 |
-| TYPE            | Groups by common charactersistics.                                                                                                                                                                                                                                 |
+| TYPE            | Groups by common characteristics.                                                                                                                                                                                                                                 |
 | UNION           | Used to combine the result set of at least two queries. Keeps only unique records.                                                                                                                                               |
 | UNION  ALL      | Like UNION, but keeps all records, including duplicates.                                                                                                                                                                         |
-| WHERE           | Used o filter results based on fields, tags, and/or timestamps.                                                                                                                                                                  |
-| WITH            | Names the query and allows for referencing the query by the specified name.                                                                                                                                                      |
+| WHERE           | Used to filter results based on fields, tags, and/or timestamps.                                                                                                                                                                  |
+| WITH            | Provides the ability to write auxiliary statements for use in a larger query.                                                                                                                                                      |
 
 ## Statements and clauses
 
@@ -228,7 +228,7 @@ SELECT [ ALL | DISTINCT ] select_expr [, …]
 
 ### The SELECT statement and FROM clause
 
-Use the SQL `SELECT` statement to query data from a specific measurement or measurments. The `FROM` clause always accompanies the `SELECT` statement.  
+Use the SQL `SELECT` statement to query data from a specific measurement or measurements. The `FROM` clause always accompanies the `SELECT` statement.  
 
 #### Examples
 
@@ -257,7 +257,7 @@ WHERE "location" = 'santa_monica' and "level description" = 'below 3 feet'
 
 ### The JOIN clause 
 
-Use the JOIN clause to join data from multiple measurments (tables).  The following joins are supported:
+Use the JOIN clause to join data from multiple measurements (tables).  The following joins are supported:
 
 {{< flex >}}
 {{< flex-content "quarter" >}}
@@ -327,7 +327,7 @@ GROUP BY "location","time"
 
 ### The HAVING clause
 
- Use the `HAVING` clause to filter query results based on a spcified condition. The `HAVING` clause must follow the `GROUP BY` clause but precedes the `ORDER BY` clause.
+ Use the `HAVING` clause to filter query results based on a specified condition. The `HAVING` clause must follow the `GROUP BY` clause but precedes the `ORDER BY` clause.
 
 #### Examples
 
@@ -384,10 +384,18 @@ LIMIT 10
 
 ### The WITH clause 
 
+The `WITH` clause provides a way to write auxiliary statements for use in a larger query.  It can help break down large, complicated queries into simpler forms. 
+
+```sql
+WITH summary_data as
+(SELECT degrees, location, time 
+  FROM average_temperature)
+SELECT * FROM summary_data
+```
 
 ### The OVER clause 
 
-The `OVER` clause is used with SQL window functions. A `window function` perfoms a calculation across a set of table rows that are related in some way to the current row. While similar to aggregate functions, window functions output reults into rows retaining their separate identities.   
+The `OVER` clause is used with SQL window functions. A `window function` performs a calculation across a set of table rows that are related in some way to the current row. While similar to aggregate functions, window functions output results into rows retaining their separate identities.   
 
 ```sql
 SELECT time, water_level 
@@ -400,10 +408,10 @@ WHERE rn <= 3;
 
 ## Comments
 
-Use comments to describe and add detail to your queries.  
+Use comments to describe and add detail and notes to your queries.  
 
  - Single line comments use the double hyphen `--` symbol. Single line comments end with a line break.
- - Multi-line comments beign with `/*` and end with ` */`. Multi-line comments span multiple lines. 
+ - Multi-line comments begin with `/*` and end with ` */`. Multi-line comments span multiple lines. 
 
  ```sql
  Single line comments:
@@ -424,7 +432,7 @@ FROM "h2o_feet"
 
 ## Functions
 
-Following is a list of supported fucntions. 
+Following is a list of supported functions by type. 
 
 ### Aggregate
 
@@ -502,24 +510,39 @@ GROUP BY time
 
 | Function | Description                                                                      |
 | :------- | :------------------------------------------------------------------------------- |
-| ABS()    | absolute value                                                                   |
-| ACOS()   | inverse cosine                                                                   |
-| ASIN()   | inverse sine                                                                     |
-| ATAN()   | inverse tangent                                                                  |
-| ATAN2()  | inverse tangent of y / x                                                         |
-| CEIL()   | returns the smallest integer value greater than or equal to the specified number |
-| COS()    | cosine                                                                           |
-| EXP()    | exponential                                                                      |
-| FLOOR()  | nearest integer less than or equal to the specified number                       |
-| LN()     | natural logarithm                                                                |
-| LOG10()  | base 10 logarithm                                                                |
-| LOG2()   | base 2 logarithm                                                                 |
-| POWER()  | returns the value of a number raised to the power of the number                  |
-| ROUND()  | round to the nearest integer                                                    |
-| SIGNUM() | sign of the argument (-1, 0, +1)                                                 |
-| SINE()   | sine                                                                             |
-| SQRT()   | returns the square root of a number                                              |
-| TAN()    | tangent                                                                          |
-| TRUNC()  | truncates a number to the specified number of decimal places                     |
+| ABS()    | Absolute value                                                                   |
+| ACOS()   | Inverse cosine                                                                   |
+| ASIN()   | Inverse sine                                                                     |
+| ATAN()   | Inverse tangent                                                                  |
+| ATAN2()  | Inverse tangent of y / x                                                         |
+| CEIL()   | Returns the smallest integer value greater than or equal to the specified number |
+| COS()    | Cosine                                                                           |
+| EXP()    | Exponential                                                                      |
+| FLOOR()  | Nearest integer less than or equal to the specified number                       |
+| LN()     | Natural logarithm                                                                |
+| LOG10()  | Base 10 logarithm                                                                |
+| LOG2()   | Base 2 logarithm                                                                 |
+| POWER()  | Returns the value of a number raised to the power of the number                  |
+| ROUND()  | Round to the nearest integer                                                    |
+| SIGNUM() | Sign of the argument (-1, 0, +1)                                                 |
+| SINE()   | Sine                                                                             |
+| SQRT()   | Returns the square root of a number                                              |
+| TAN()    | Tangent                                                                          |
+| TRUNC()  | Truncates a number to the specified number of decimal places                     |
 
+### Conditional functions
+
+| Function | Description                                                                                                |
+| :------- | :--------------------------------------------------------------------------------------------------------- |
+| COALESCE | Returns the first argument that is not null. If all arguments are null, then `COALESCE` will return nulls. |
+| NULLIF   | Returns a null value if value1 equals value2, otherwise returns value1.                                    |
+                                                                                                           |
+
+### Regular expression functions
+
+| Function       | Description                                                                  |
+| :------------- | :--------------------------------------------------------------------------- |
+| REGEXP_MATCH   | Matches a regular expression against a string and returns matched substrings |
+| REGEXP_REPLACE | Replaces substrings that match a regular expression by a new substring       |
+|                |                                                                              |
 

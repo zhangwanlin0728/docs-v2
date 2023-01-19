@@ -17,3 +17,11 @@ weight: 250
 SELECT approx_median("pH")
 FROM "h2o_pH"
 ```
+
+
+### The APPROX_PERCENTILE_CONT function
+
+doesn't work
+SELECT APPROX_PERCENTILE_CONT("pH"), time
+FROM "h2o_pH"
+GROU BY time

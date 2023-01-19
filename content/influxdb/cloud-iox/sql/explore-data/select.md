@@ -50,7 +50,7 @@ SELECT *
   FROM h2o_feet
 ```
 
-Output:
+Results:
 | level description         | location     | time                     | water_level |
 | :------------------------ | :----------- | :----------------------- | :---------- |
 | at or greater than 9 feet | coyote_creek | 2019-09-01T00:00:00.000Z | 9.126144144 |
@@ -71,7 +71,8 @@ Select specific tags and fields from a measurement:
 SELECT "location","water_level" 
   FROM "h2o_feet"
 ```
-Output:
+
+Results:
 | location     | water_level |
 | :----------- | :---------- |
 | coyote_creek | 9.126144144 |
@@ -86,14 +87,16 @@ Select a filed and perform basic arithmetic:
 SELECT ("water_level" * 3) + 5 
   FROM "h2o_feet"
 ```
+
+Results:
 | water_level        |
 | :----------------- |
-| 32.378432432       |
-| 32.027             |
-| 31.586             |
-| 31.142000000000003 |
-| 30.641000000000002 |
 | 30.128             |
+| 30.641000000000002 |
+| 31.142000000000003 |
+| 31.586             |
+| 32.027             |
+| 32.378432432       |
 
 
 
