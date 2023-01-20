@@ -10,13 +10,17 @@ menu:
 weight: 220
 ---
 
-Selector functions are unique to time series databases.  Like aggregate functions, selector functions are used to reduce the size of your results set.  Unlike aggregates, which return a single modified value based on an aggregate condition, selectors can return multiple rows of values.  For example, selector_min and selector_max can return multiple values if the value is a tie.  Selectors also allow you to group aggregate values by time.
+Selector functions are unique to InfluxDB. They behave like aggregate functions in that they take a row of data and compute it down to a single value.  However, selectors are unique in that they return a **time value** in addition to the computed value. In short, selectors retrun an aggreagetd value along with a timestamp. 
 
-An aggregate finction will modify a value and return the value.  A selector says "here's the row per the logic you have chosen". 
+Selector functions must be computed using two separate function calls, one for the value and one for time.
 
 
+
+<!-- Selector functions are unique to time series databases.  Like aggregate functions, selector functions are used to reduce the size of your results set.  Unlike aggregates, which return a single modified value based on an aggregate condition, selectors can return multiple rows of values.  For example, selector_min and selector_max can return multiple values if the value is a tie.  Selectors also allow you to group aggregate values by time. -->
 
 ### The SELECTOR_MIN() function
+
+The SELECTOR_MIN() function returns the smallest value of a selected column and a timestamp. 
 
 Examples:
 
@@ -38,6 +42,8 @@ Results:
 
 ### The SELECTOR_LAST() function
 
+The SELECTOR_LAST function returns the last value of a selected column and the timestamp. If there are multiple rows with the maximum timestamp value, the value is arbitrary.
+
 ```sql
 SELECT 
 SELECTOR_LAST(degrees, time)['time'],
@@ -51,3 +57,4 @@ Results:
 | time            | value |
 | :----------------------- | :---- |
 | 2019-09-17T16:24:00.000Z | 63    |
+

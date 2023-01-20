@@ -23,27 +23,27 @@ InfluxDB Cloud backed by InfluxDB IOx uses the Apache Arrow DataFusion implement
 
 ## SQL Identifiers
 
-An identifier is a token which refers to the name of an InfluxDB database object, such as a `measurement`, `tag`, or `field`.
+An identifier is a token which refers to the name of an InfluxDB database object, such as a `bucket`, `measurement`, `tag`, or `field`.
 
 ## Quoting and case sensitivity
 
 Rules for quoting:
 
-- Single quote time durations (excluding Unix epoch).
+- Single quote RFCC3339 time durations.
+- Do not quote Unix epoch times durations.
 - Double quote database identifiers (column names).
-- Names using mixed case or [camel case](https://en.wikipedia.org/wiki/Camel_case) must be in double quotes.
+- Identifiers using mixed case or [camel case](https://en.wikipedia.org/wiki/Camel_case) must be in double quotes.
 - If an identifier contains whitespace it must be in double quotes.
-- Unquoted identifiers are not case sensitive. 
 
 ```sql
 -- Examples
 SELECT * FROM "water temperature"
-SELECT * FROM "water_temperature"
+SELECT * FROM "h2o_temperature"
 SELECT "pH"
 ```
 
 {{% note %}}
-**Note:** Not all identifiers require double quotes.  The following queries will both return results:
+**Note:** It is a best practice to always double quote identiifiers, regardless of whether they are case sensitive or not.  The following queries will both return results:
 
 ```sql
 SELECT location, water_level 
@@ -53,13 +53,18 @@ SELECT "location","water_level"
 FROM "h2o_feet"
 
 ```
-{{% /note %}}
 
- When a table is created, the case of a column is automatically stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
+In some cases, however, using single quotes and misquoting identifiers will return inaccurate results. To avoid this, it is recommended that you double quote identifiers.
 
- The following query will fail if the measurement `h2o-pH` and the field `pH` are not double quoted:
+Regarding case sensitivity:
 
- ```sql
+- Unquoted identifiers **are not** case sensitive. 
+
+When a table is created, the case of a column is automatically stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
+
+The following query will return an error if the measurement `h2o-pH` and the field `pH` are not double quoted:
+
+```sql
 SELECT "pH", location, time
 FROM "h2o_pH"
 ```
@@ -121,7 +126,7 @@ Boolean literals are either TRUE or FALSE.
 
 ## Duration units
 
-Duration units specify a length of time.  You must spell out the entire unit of time or the query will error.
+Duration units specify a length or unit of time.  You must spell out the entire unit of time or the SQL ßquery will error.
 
 ```sql
 --Correct:
@@ -131,6 +136,7 @@ interval'400 minutes'
 interval'400m'
 ```
 
+Supported durations:
 | Unit         | Meaning                  |
 | :----------- | :----------------------- |
 | nanoseconds  | 1 billionth of a second  |
@@ -140,12 +146,13 @@ interval'400m'
 | minute       | 60 seconds               |
 | hour         | 60 minutes               |
 | day          | 24 hours                 |
-| week         | 7 days                   |
-| month        |                          |
-| year         | 365 days                 |
-
+| week         | calendar week            |
+| month        | calendar month           |
+| year         | calendar year            |
 
 ## Operators
+
+Operators are reserved words or characters which perform certain operations, inluding comparisons and arithmetic. 
 
 ### Arithmetic operators
 
@@ -181,7 +188,7 @@ Comparison operators compare numbers or strings and perform evaluations. They ar
 | ALL             | Returns boolean TRUE if all subquery values have met the specified condition.                                                                                                                                                    |
 | AS              | Renames a column with an alias.  Use in `CAST` operations.                                                                                                                                                                       |
 | ASC             | Sorts query results in ascending order.                                                                                                                                                                                          |
-| BOTTOM           |  Specifies the bottom number of records to return.                                                                                                                             
+| BOTTOM          | Specifies the bottom number of records to return.                                                                                                                                                                                |
 | DESC            | Sorts query results in descending order.                                                                                                                                                                                         |
 | DISTINCT        | Selects only distinct values.                                                                                                                                                                                                    |
 | EXISTS          | Find all rows in a relation where a correlated subquery produces one or more matches for that row. Only correlated subqueries are supported.                                                                                     |
@@ -202,12 +209,12 @@ Comparison operators compare numbers or strings and perform evaluations. They ar
 | RIGHT JOIN      | A join that includes all rows from the right table even if there is not a match in the left table. When there is no match, null values are produced for the left side of the join.                                               |
 | SELECT          | Retrieves rows from a table (measurement).                                                                                                                                                                                       |
 | SELECT DISTINCT | Returns only distinct (different) values from a table (measurement).                                                                                                                                                             |
-| TOP             | Specifies the top number of records to return.                                                                                                                                                                                                                                 |
-| TYPE            | Groups by common characteristics.                                                                                                                                                                                                                                 |
+| TOP             | Specifies the top number of records to return.                                                                                                                                                                                   |
+| TYPE            | Groups by common characteristics.                                                                                                                                                                                                |
 | UNION           | Used to combine the result set of at least two queries. Keeps only unique records.                                                                                                                                               |
 | UNION  ALL      | Like UNION, but keeps all records, including duplicates.                                                                                                                                                                         |
-| WHERE           | Used to filter results based on fields, tags, and/or timestamps.                                                                                                                                                                  |
-| WITH            | Provides the ability to write auxiliary statements for use in a larger query.                                                                                                                                                      |
+| WHERE           | Used to filter results based on fields, tags, and/or timestamps.                                                                                                                                                                 |
+| WITH            | Provides the ability to write auxiliary statements for use in a larger query.                                                                                                                                                    |
 
 ## Statements and clauses
 
@@ -429,14 +436,37 @@ Multiline comments:
 SELECT COUNT("water_level")
 FROM "h2o_feet"
 ```
+## Schema information
+
+InfluxDB Cloud backed by InfluxDB IOx supports the following metedata schema queries:
+
+```sql
+SHOW tables
+
+SHOW columns FROM <measurement>
+
+```
+
+## Conditional expressions
+
+Conditional expressions evaluate conditions based on input values.
+
+The following conditional expressions are supported:
+
+| Expression | Description                                                        |
+| :--------- | :----------------------------------------------------------------- |
+| CASE       | Allows for use of IF-TEHN-ELSE statements                          |
+| COALESCE   | Returns the first non-NULL expression in a specified list          |
+| NULLIF     | Returns a NULL value if value1 = value2. Otherwise returns value1. |
+
 
 ## Functions
 
 Following is a list of supported functions by type. 
 
-### Aggregate
+### Aggregate functions
 
-An aggregate function performs a calculation on a set of data values in a column and returns a single value.  
+An aggregate function performs a calculation or computation on a set of data values in a column and returns a single value.  
 
 | Function | Description                                                |
 | :------- | :--------------------------------------------------------- |
@@ -463,17 +493,32 @@ FROM "h2o_feet"
 GROUP BY "location"
 ```
 
-### Selectors
+### Selector functions
 
-Selector functions are unique to time series databases. They behave like aggregate functions but there are some key differences.
+Selector functions are unique to InfluxDB. They behave like aggregate functions in that they take a row of data and compute it down to a single value.  However, selectors are unique in that they return a **time value** in addition to the computed value. In short, selectors retrun an aggreagetd value along with a timestamp. 
 
-| Function         | Description                                     |
-| :--------------- | :---------------------------------------------- |
-| SELECTOR_FIRST() |                                                 |
-| SELECTOR_LAST()  |                                                 |
-| SELECTOR_MIN()   | Returns the smallest value of a selected column |
-| SELECTOR_MAX()   | Returns the largest value of a selected column  |
+| Function         | Description                                                     |
+| :--------------- | :-------------------------------------------------------------- |
+| SELECTOR_FIRST() | Returns the first value of a selected column and a timestamp    |
+| SELECTOR_LAST()  | Returns the last value of a selected column and a timestamp     |
+| SELECTOR_MIN()   | Returns the smallest value of a selected column and a timestamp |
+| SELECTOR_MAX()   | Returns the largest value of a selected column and a timestamp  |
 
+#### Examples
+
+```sql
+SELECT 
+SELECTOR_MAX("pH", time)['value'],
+SELECTOR_MAX("pH", time)['time']
+FROM "h2o_pH"
+
+SELECT 
+SELECTOR_LAST("water_level", time)['value'],
+SELECTOR_LAST("water_level", time)['time']
+FROM "h2o_feet"
+WHERE time >= timestamp '2019-09-10T00:00:00Z' AND time <= timestamp '2019-09-19T00:00:00Z'
+
+```
 
 ### Time series functions
 
@@ -488,6 +533,10 @@ Selector functions are unique to time series databases. They behave like aggrega
 #### Examples
 
 ```sql
+SELECT time_bucket_gapfill('1 day', time) as day,
+"degrees", "location", "time"
+FROM "h2o_temperature"
+
 SELECT DATE_BIN(INTERVAL '1 hour', time, '2019-09-18T00:00:00Z'::timestamp),
 SUM(water_level)
 FROM "h2o_feet"
@@ -523,7 +572,7 @@ GROUP BY time
 | LOG10()  | Base 10 logarithm                                                                |
 | LOG2()   | Base 2 logarithm                                                                 |
 | POWER()  | Returns the value of a number raised to the power of the number                  |
-| ROUND()  | Round to the nearest integer                                                    |
+| ROUND()  | Round to the nearest integer                                                     |
 | SIGNUM() | Sign of the argument (-1, 0, +1)                                                 |
 | SINE()   | Sine                                                                             |
 | SQRT()   | Returns the square root of a number                                              |
@@ -544,5 +593,4 @@ GROUP BY time
 | :------------- | :--------------------------------------------------------------------------- |
 | REGEXP_MATCH   | Matches a regular expression against a string and returns matched substrings |
 | REGEXP_REPLACE | Replaces substrings that match a regular expression by a new substring       |
-|                |                                                                              |
 
