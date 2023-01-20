@@ -11,17 +11,18 @@ weight: 190
 
 InfluxDB Cloud backed by InfluxDB IOx uses the Apache Arrow DataFusion implementation of SQL.  
 
-- [SQL Identifiers](#identifiers)  
-- [Quoting and case sensitivity](#)  
+- [SQL identifiers](#SQL-identifiers)  
+- [Quoting and case sensitivity](#quoting-and-case-sensitivity)    
 - [Literals](#literals)  
-- [Duration units](#)  
-- [Operators](#)  
-- [SQL keywords](#)  
-- [Statements and clauses](#)  
-- [Comments](#)  
-- [Functions](#)  
+- [Duration units](#duration-units)  
+- [Operators](#operators)  
+- [SQL keywords](#sql-keywords)  
+- [Statements and clauses](#statements-and-clauses)  
+- [Comments](#comments)  
+- [Conditional expressions ](#conditional-expressions)
+- [Functions](#functions)  
 
-## SQL Identifiers
+## SQL identifiers
 
 An identifier is a token which refers to the name of an InfluxDB database object, such as a `bucket`, `measurement`, `tag`, or `field`.
 
@@ -51,16 +52,12 @@ FROM h2o_feet
 
 SELECT "location","water_level" 
 FROM "h2o_feet"
-
 ```
+{{% /note %}}
 
 In some cases, however, using single quotes and misquoting identifiers will return inaccurate results. To avoid this, it is recommended that you double quote identifiers.
 
-Regarding case sensitivity:
-
-- Unquoted identifiers **are not** case sensitive. 
-
-When a table is created, the case of a column is automatically stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
+Unquoted identifiers **are not** case sensitive.  When a table is created, the case of a column is automatically stored in lowercase **unless** the column name is quoted.  The column name `pH` must be quoted in order to preserve the lowercase p and uppercase H. 
 
 The following query will return an error if the measurement `h2o-pH` and the field `pH` are not double quoted:
 
@@ -248,7 +245,7 @@ FROM "h2o_feet"
 ```
 ### The WHERE clause
 
-Use the `WHERE` clause to filter results based on fields, tags, and/or timestamps.
+Use the `WHERE` clause to filter results based on `fields`, `tags`, and/or `timestamps`.
 
 #### Examples
 
@@ -364,6 +361,7 @@ UNION ALL
 SELECT "location"
 FROM "h2o_quality"
 ```
+
 ### The ORDER BY clause 
 
 The `ORDER BY` clause orders results by the referenced expression.  The result order is `ASC` **by default**.  You can filter data based on fields, tags, and/or timestamps.
@@ -436,6 +434,7 @@ Multiline comments:
 SELECT COUNT("water_level")
 FROM "h2o_feet"
 ```
+
 ## Schema information
 
 InfluxDB Cloud backed by InfluxDB IOx supports the following metedata schema queries:
@@ -444,7 +443,6 @@ InfluxDB Cloud backed by InfluxDB IOx supports the following metedata schema que
 SHOW tables
 
 SHOW columns FROM <measurement>
-
 ```
 
 ## Conditional expressions

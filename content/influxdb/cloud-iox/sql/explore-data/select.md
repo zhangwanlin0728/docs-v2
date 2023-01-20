@@ -81,7 +81,7 @@ Results:
 | coyote_creek | 8.714       |
 | coyote_creek | 8.547       |
 
-Select a filed and perform basic arithmetic:
+Select a field and perform basic arithmetic:
 
 ```sql
 SELECT ("water_level" * 3) + 5 
