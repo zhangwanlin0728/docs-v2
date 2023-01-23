@@ -26,6 +26,8 @@ FROM "h2o_temperature"
 
 ### The DATEBIN() function
 
+The `DATE_BIN` function bins the input timestamp into a specified interval.   
+
 ```sql
 SELECT DATE_BIN(INTERVAL '1' day, time, TIMESTAMP '2022-01-01 00:00:00Z') AS time, COUNT("water_level")  as water_level_count
 FROM "h2o_feet"

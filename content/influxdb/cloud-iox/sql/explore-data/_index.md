@@ -9,8 +9,7 @@ menu:
 weight: 201
 ---
 
-There are a few points to rmember when creating SQL queries.  The first is that keywords in SQL are not case sensitive.  
-Both SELECT and select will reutn results without error. The second is that a query can be written on any number of lines.  You can create a multi-clause query on one line or separate each clause on a new line.  
+The sample data used in the example queries in InfluxDB's SQL documenation can be downloaded
 
 InfluxDB SQL supports the following basic syntax for queries:
 
@@ -26,3 +25,10 @@ SELECT [ ALL | DISTINCT ] select_expr [, …]
 [ ORDER BY expression [ ASC | DESC ][, …] ]  
 [ LIMIT count ]  
 ```
+
+The sample data used in the example queries in InfluxDB's SQL documenation can be downloaded
+
+
+
+There are a few points to rmember when creating SQL queries.  The first is that keywords in SQL are not case sensitive.  
+Both SELECT and select will reutn results without error. The second is that a query can be written on any number of lines.  You can create a multi-clause query on one line or separate each clause on a new line.  
