@@ -1,7 +1,7 @@
 ---
 title: Query data with SQL
 description: >
-  Query InfluxDB using Flight SQL.
+  Query InfluxDB using SQL.
 menu:
   influxdb_cloud_iox:
     name: Query data with SQL

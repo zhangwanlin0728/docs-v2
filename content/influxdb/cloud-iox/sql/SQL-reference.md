@@ -11,18 +11,18 @@ weight: 190
 
 InfluxDB Cloud backed by InfluxDB IOx uses the Apache Arrow DataFusion implementation of SQL.  
 
-- [SQL identifiers](#SQL-identifiers)  
+- [Identifiers](#identifiers)  
 - [Quoting and case sensitivity](#quoting-and-case-sensitivity)    
 - [Literals](#literals)  
 - [Duration units](#duration-units)  
 - [Operators](#operators)  
-- [SQL keywords](#sql-keywords)  
+- [Keywords](#keywords)  
+- [Conditional expressions](#conditional-expressions)
 - [Statements and clauses](#statements-and-clauses)  
 - [Comments](#comments)  
-- [Conditional expressions ](#conditional-expressions)
 - [Functions](#functions)  
 
-## SQL identifiers
+## Identifiers
 
 An identifier is a token which refers to the name of an InfluxDB database object, such as a `bucket`, `measurement`, `tag`, or `field`.
 
@@ -123,7 +123,7 @@ Boolean literals are either TRUE or FALSE.
 
 ## Duration units
 
-Duration units specify a length or unit of time.  You must spell out the entire unit of time or the SQL ßquery will error.
+Duration units specify a length or unit of time.  You must spell out the entire unit of time or the SQL query will error.
 
 ```sql
 --Correct:
@@ -177,7 +177,9 @@ Comparison operators compare numbers or strings and perform evaluations. They ar
 |   `<`    | less than                | 1 < 2      |
 |   `<=`   | less than or equal to    | 1<= 2      |
 
-## SQL keywords
+## Keywords
+
+Reserved key words canot be used as identifiers.
 
 | Keyword         | Description                                                                                                                                                                                                                      |
 | :-------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -212,6 +214,18 @@ Comparison operators compare numbers or strings and perform evaluations. They ar
 | UNION  ALL      | Like UNION, but keeps all records, including duplicates.                                                                                                                                                                         |
 | WHERE           | Used to filter results based on fields, tags, and/or timestamps.                                                                                                                                                                 |
 | WITH            | Provides the ability to write auxiliary statements for use in a larger query.                                                                                                                                                    |
+
+## Conditional expressions
+
+Conditional expressions evaluate conditions based on input values.
+
+The following conditional expressions are supported:
+
+| Expression | Description                                                        |
+| :--------- | :----------------------------------------------------------------- |
+| CASE       | Allows for use of IF-TEHN-ELSE statements.                          |
+| COALESCE   | Returns the first non-NULL expression in a specified list.         |
+| NULLIF     | Returns a NULL value if value1 = value2. Otherwise returns value1. |
 
 ## Statements and clauses
 
@@ -445,19 +459,6 @@ SHOW tables
 SHOW columns FROM <measurement>
 ```
 
-## Conditional expressions
-
-Conditional expressions evaluate conditions based on input values.
-
-The following conditional expressions are supported:
-
-| Expression | Description                                                        |
-| :--------- | :----------------------------------------------------------------- |
-| CASE       | Allows for use of IF-TEHN-ELSE statements                          |
-| COALESCE   | Returns the first non-NULL expression in a specified list          |
-| NULLIF     | Returns a NULL value if value1 = value2. Otherwise returns value1. |
-
-
 ## Functions
 
 Following is a list of supported functions by type. 
@@ -497,10 +498,10 @@ Selector functions are unique to InfluxDB. They behave like aggregate functions 
 
 | Function         | Description                                                     |
 | :--------------- | :-------------------------------------------------------------- |
-| SELECTOR_FIRST() | Returns the first value of a selected column and a timestamp    |
-| SELECTOR_LAST()  | Returns the last value of a selected column and a timestamp     |
-| SELECTOR_MIN()   | Returns the smallest value of a selected column and a timestamp |
-| SELECTOR_MAX()   | Returns the largest value of a selected column and a timestamp  |
+| SELECTOR_FIRST() | Returns the first value of a selected column and timestamp.   |
+| SELECTOR_LAST()  | Returns the last value of a selected column and timestamp.     |
+| SELECTOR_MIN()   | Returns the smallest value of a selected column and timestamp. |
+| SELECTOR_MAX()   | Returns the largest value of a selected column and timestamp.  |
 
 #### Examples
 
@@ -520,14 +521,15 @@ WHERE time >= timestamp '2019-09-10T00:00:00Z' AND time <= timestamp '2019-09-19
 
 ### Time series functions
 
-| Function              | Description                                                                                    |
-| :-------------------- | :--------------------------------------------------------------------------------------------- |
-| TIME_BUCKET_GAPFILL() | Returns a contiguous set of time bucketed data                                                 |
-| DATEBIN()             | Bins the input timestamp into a specified interval                                             |
-| DATE_TRUNC()          | Truncates a timestamp expression based on the date part specified, such as hour, day, or month |
-| DATE_PART()           | Returns the specified part of a date                                                           |
-| NOW()                 | Returns the current time                                                                       |
-
+| Function              | Description                                                                                     |
+| :-------------------- | :---------------------------------------------------------------------------------------------- |
+| TIME_BUCKET_GAPFILL() | Returns a contiguous set of time bucketed data.                                                 |
+| DATEBIN()             | Bins the input timestamp into a specified interval.                                             |
+| DATE_TRUNC()          | Truncates a timestamp expression based on the date part specified, such as hour, day, or month. |
+| DATE_PART()           | Returns the specified part of a date.                                                           |
+| NOW()                 | Returns the current time.                                                                       |
+|                       
+                 
 #### Examples
 
 ```sql
@@ -550,7 +552,7 @@ GROUP BY time
 
 | Function      | Description                                    |
 | :------------ | :--------------------------------------------- |
-| APPROX_MEDIAN | Returns the approximate median of input values |
+| APPROX_MEDIAN | Returns the approximate median of input values. |
 
 
 ### Math functions
@@ -587,8 +589,8 @@ GROUP BY time
 
 ### Regular expression functions
 
-| Function       | Description                                                                  |
-| :------------- | :--------------------------------------------------------------------------- |
-| REGEXP_MATCH   | Matches a regular expression against a string and returns matched substrings |
-| REGEXP_REPLACE | Replaces substrings that match a regular expression by a new substring       |
+| Function       | Description                                                                   |
+| :------------- | :---------------------------------------------------------------------------- |
+| REGEXP_MATCH   | Matches a regular expression against a string and returns matched substrings. |
+| REGEXP_REPLACE | Replaces substrings that match a regular expression by a new substring.       |
 
