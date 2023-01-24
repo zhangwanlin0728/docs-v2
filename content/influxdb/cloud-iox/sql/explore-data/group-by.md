@@ -57,3 +57,16 @@ WHERE time >= timestamp '2019-08-17T00:00:00Z' AND time <= timestamp '2019-09-10
 GROUP BY 1
 ORDER BY 1 DESC
 ```
+
+
+SELECT
+DATE_BIN(INTERVAL '1 hour', time, '2022-01-01T00:00:00Z'::TIMESTAMP) AS windowtime,
+mean(field1),
+sum(field2),
+tag1
+FROM home
+GROUP BY windowtime, tag1
+ORDER BY windowtime
+
+SELECT
+DATE_BIN(INTERVAL '1 hour', time, '2022-01-01T00:00:00Z'::TIMESTAMP) AS windowtime,
