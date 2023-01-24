@@ -61,7 +61,14 @@ Results:
 SELECT AVG("water_level"), "location"
 FROM "h2o_feet" 
 GROUP BY "location"
+
+
+SELECT AVG("water_level"), "location"
+FROM "h2o_feet" 
+WHERE "time" >= '2019-08-18T09:00:00Z'::timestamp AND "time" <= '2019-08-18T21:00:00Z'::timestamp 
+GROUP BY  "location"
 ```
+
 
 ### The SUM() function
 
