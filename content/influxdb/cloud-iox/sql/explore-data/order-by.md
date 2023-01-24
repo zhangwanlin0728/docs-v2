@@ -21,7 +21,9 @@ The ORDER BY clause orders results by the referenced expression.  The result ord
 [SELECT CLAUSE] [FROM CLAUSE] [ ORDER BY expression [ ASC | DESC ][, …] ]
 ```
 
-If your query includes a `GROUP BY` clause, the `ORDER BY` clause must appear **after** the `GROUP BY` clause.
+{{% note %}}
+**Note:** If your query includes a `GROUP BY` clause, the `ORDER BY` clause must appear **after** the `GROUP BY` clause.
+{{% /note %}}
 
 ### Examples
 
@@ -37,7 +39,7 @@ ORDER BY time DESC
 Results:
 
 | time                     | water_level |
-| :----------------------- | ----------- |
+| :----------------------- | :----------- |
 | 2019-09-17T16:24:00.000Z | 3.235       |
 | 2019-09-17T16:18:00.000Z | 3.314       |
 | 2019-09-17T16:12:00.000Z | 3.402       |
