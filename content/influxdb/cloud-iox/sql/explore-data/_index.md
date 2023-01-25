@@ -32,3 +32,7 @@ The sample data used in the example queries in InfluxDB's SQL documenation can b
 
 There are a few points to rmember when creating SQL queries.  The first is that keywords in SQL are not case sensitive.  
 Both SELECT and select will reutn results without error. The second is that a query can be written on any number of lines.  You can create a multi-clause query on one line or separate each clause on a new line.  
+
+A few things to keep in mond:
+
+ - when querying data, sort order of rows is not guaranteed unless you use `ORDER BY 1, 2` in your query.

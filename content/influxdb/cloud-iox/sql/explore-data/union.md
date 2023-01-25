@@ -2,7 +2,7 @@
 title: The UNION clause
 list_title: The UNION clause
 description: > 
-    Use the `UNION` clause to combine the results of two or more SELECT statements without returning any duplicate rows.
+    Use the `UNION` clause to combine the results of two or more queries into a single set of results.
 menu:
   influxdb_cloud_iox:
     name: The UNION clause
@@ -10,77 +10,57 @@ menu:
 weight: 295
 ---
 
+The `UNION` clause combines the results of two or more `SELECT` statements into a single results set.
+
+Key points to keep in mind when using the `UNION` clause:
+
+ - the number of columns in the column list must be the same
+ - the columns in the column list must be in the same order
+ - the data types in the column list must be the same or compatible  
+
 
 - [Syntax](#syntax)
 - [Examples](#examples)
 
-
-### Syntax
-
-SELECT
-    a,
-    b,
-    c
-FROM table1
-UNION ALL
-SELECT
-    a,
-    b,
-    c
-FROM table2
-
-{{% note %}}
-**Note:** Union queries must have the same number of columns, (left is 1, right is 2)
-{{% /note %}}
-
-### Examples
-
-Simple `UNION` query:
+## Syntax
 
 ```sql
-SELECT 'pH', time
-FROM "h2o_pH"
-UNION
-SELECT "location", time
-FROM "h2o_quality"
-```
+SELECT a, b, c
+FROM measurement_1
+UNION [ALL]
+SELECT a, b, c
+FROM measurement_2
+``` 
 
-Results:
+## Examples
 
-| time                     | pH  |
-| :----------------------- | :-- |
-| 2019-08-17T00:06:00.000Z | pH  |
-| 2019-08-17T00:12:00.000Z | pH  |
-| 2019-08-17T00:36:00.000Z | pH  |
-
-Note that when working with time you must specifiy `time` in **both** SQL queries.  
-
-Query using `UNION ALL`:
+Basic `UNION` query:
 
 ```sql
-SELECT 'pH'
+SELECT "pH" as "water_pH", "time", "location"
 FROM "h2o_pH"
-UNION ALL
-SELECT "location"
+UNION 
+SELECT "location", "time", "randtag" 
 FROM "h2o_quality"
 ```
- 
 Results:
 
- | pH           |
- | :----------- |
- | coyote_creek |
- | pH           |
- | santa_monica |
+| location     | time                     | water_ph |
+| :----------- | :----------------------- | :------- |
+| coyote_creek | 2019-08-21T00:00:00.000Z | 8.0      |
+| coyote_creek | 2019-08-21T00:18:00.000Z | 7.0      |
+| coyote_creek | 2019-08-21T00:42:00.000Z | 8.0      |
+
+The query returns the location, time and pH from the 2 tables.
 
 `UNION ALL` query using an `OVER` clause:
 
 ```sql
-select 'bottom' as type, time, water_level from 
-  (select time, "water_level", row_number() OVER (order by water_level) as rn from h2o_feet) where rn <= 3 
+SELECT 'bottom' as type, time, water_level FROM
+  (SELECT time, "water_level", row_number() OVER (order by water_level) as rn FROM h2o_feet) where rn <= 3 
 UNION ALL 
-select 'top' as type, time, water_level from 
-  (select time, "water_level", row_number() OVER (order by water_level desc) as rn from h2o_feet) where rn <= 3;
+SELECT 'top' as type, time, water_level FROM 
+  (SELECT time, "water_level", row_number() OVER (order by water_level DESC) as rn FROM h2o_feet) where rn <= 3
   ```
 Results:
 | time                     | type   | water_level |
@@ -92,3 +72,4 @@ Results:
 | 2019-08-29T15:18:00.000Z | bottom | -0.594      |
 | 2019-08-28T14:36:00.000Z | bottom | -0.591      |
 
+The query returns the type of `water_level`, top or bottom, using the `OVER` clause to window the data to get the top and bottom 3 results.
