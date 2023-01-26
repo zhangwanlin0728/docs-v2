@@ -14,7 +14,7 @@ InfluxDB Cloud backed by InfluxDB IOx uses the [Apache Arrow DataFusion](https:/
 
 When working with InfluxDB's implementation of SQL, `buckets` are databases, `measurments` are tables and `tags`, `fields` and `timestamps` are the euqivalent to columns. 
 
-If we execute a `SHOW columns` command on a measurment, the results show all the column names in the measurement and information about each column, such as data type, table name, etc.
+If we execute a `SHOW columns` command on a measurment, the results show all the column names in the measurement and information about each column, such as column name, data type, etc.
 
 ```sql
 -- Basic syntax
@@ -38,7 +38,7 @@ Results:
 
 ## SQL and the InfluxDB UI
 
-The queries and resutls throughout SQL documenation were written and run using the InfluxDB UI.  
+The queries and results throughout SQL documenation were written and run using the InfluxDB UI.  
 
 To use the UI do the following:
 
@@ -48,15 +48,15 @@ To use the UI do the following:
 
 2. In the **Schema Browser** panel on the left, select a bucket from the dropdown menu to define your data source.
 
-3. Next, select a measurement to query from the dropdown menu.  You will see a list of fields and tags that belong to the measurment. 
+3. Next, select a measurement to query from in the dropdown menu.  You will see a list of fields and tags that belong to each measurment. 
 
 4. Use the **Script editor** to manually create SQL scripts. Simply click in the editor to start writing a query. 
 
-5. Alternatively, turn on **SQL Sync** to get basic precreated SQL queries.  
+5. Alternatively, turn on **SQL Sync** to get basic precreated SQL queries.  Click on fields and tags under the measurement dropdown menu to automatically add them to your query.
 
 6. You can select a time range using the dropdown menu under the script editor, or add one manually. 
 
-7. Click **Run** to execute the query.  
+7. Click **Run** to execute a query.  
 
-8.  You can download the results to a CSV file by clicking on **CSV** under the script editor.
+8. You can download the results to a CSV file by clicking on **CSV** under the script editor.
 
