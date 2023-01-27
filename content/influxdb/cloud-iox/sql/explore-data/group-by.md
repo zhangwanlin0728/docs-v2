@@ -15,21 +15,23 @@ Use the `GROUP BY` clause to group query results based on specified tag keys and
 - [Syntax](#syntax)
 - [Examples](#examples)
 
-### Syntax
+## Syntax
 
 ```sql
+--Basic syntax:
+
 SELECT
-tag 1, field 1, AGGREGATE() function
+  tag 1, field 1, AGGREGATE() function, SELECTOR() function
 FROM measurement
 GROUP BY tag 1
 ```
 
-### Examples
+## Examples
 
 Group data by a single tag key:
 
 ```sql
-SELECT MEAN("water_level"), "location"
+SELECT MEAN("water_level"), "location", "time"
 FROM "h2o_feet" 
 GROUP BY "location"
 ```
@@ -39,34 +41,31 @@ GROUP BY "location"
 | 3.530712094245885         | santa_monica |
       |
 
-Group by time
-
-```sql
-SELECT MEAN("temperature"),"time"
-FROM "airSensors" 
-GROUP BY "sensor_id","time"
-```
-
+Group results in 15 minute time intervals by tag:
 
 ```sql
 SELECT
-  DATE_BIN(INTERVAL '1' day, time, TIMESTAMP '2022-01-01 00:00:00Z') AS time,
-  COUNT("water_level")  as count
-FROM "h2o_feet"
-WHERE time >= timestamp '2019-08-17T00:00:00Z' AND time <= timestamp '2019-09-10T00:00:00Z'
-GROUP BY 1
-ORDER BY 1 DESC
+  "location",
+  DATE_BIN(INTERVAL '15 minutes', time, TIMESTAMP '2022-01-01 00:00:00Z') AS time,
+  COUNT("water_level")  AS count
+FROM 
+  "h2o_feet"
+WHERE time >= timestamp '2019-09-17T00:00:00Z' AND time <= timestamp '2019-09-17T01:00:00Z'
+GROUP BY 1,2
+ORDER BY 1
 ```
 
+| count | location     | time                     |
+| :---- | :----------- | :----------------------- |
+| 1     | coyote_creek | 2019-09-16T23:45:00.000Z |
+| 2     | coyote_creek | 2019-09-17T00:30:00.000Z |
+| 3     | coyote_creek | 2019-09-17T00:45:00.000Z |
+| 2     | coyote_creek | 2019-09-17T00:00:00.000Z |
+| 3     | coyote_creek | 2019-09-17T00:15:00.000Z |
+| 1     | santa_monica | 2019-09-16T23:45:00.000Z |
+| 2     | santa_monica | 2019-09-17T00:30:00.000Z |
+| 3     | santa_monica | 2019-09-17T00:45:00.000Z |
+| 2     | santa_monica | 2019-09-17T00:00:00.000Z |
+| 3     | santa_monica | 2019-09-17T00:15:00.000Z |
 
-SELECT
-DATE_BIN(INTERVAL '1 hour', time, '2022-01-01T00:00:00Z'::TIMESTAMP) AS windowtime,
-mean(field1),
-sum(field2),
-tag1
-FROM home
-GROUP BY windowtime, tag1
-ORDER BY windowtime
-
-SELECT
-DATE_BIN(INTERVAL '1 hour', time, '2022-01-01T00:00:00Z'::TIMESTAMP) AS windowtime,
+The query uses a `COUNT()` function to count the number of water_level points, a `DATE_BIN()` function to group results by 15 minute intervals and an `ORDER BY 1` clause to order the results by location.
