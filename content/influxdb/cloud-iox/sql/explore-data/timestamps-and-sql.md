@@ -10,16 +10,20 @@ weight: 290
 
 ---
 
-## Working with timestamps in InfluxDB SQL
+InfluxDB's SQL implementation is designed to work with time series data.  There are specific ways for structuring queries to work with time and timestamps.
+
+[](#)
+
+## Timestamp formats 
 
 The following timestamp formats ae supported in InfluxDB SQL:
 
- - '2022-01-31T06:30:30.123Z' (RFC3339) 
- - '2022-01-31T01:00:00.123-05:00' (RFC3339) 
- - '2022-01-31 01:00:00.123-05:00' (RFCC3339 like)
- - '2022-01-31T06:30:30Z' (RFC3339-like)
- - '2022-01-31 06:30:30.123' (RFC3339-like)
- - '2022-01-31 06:30:30' ((RFC3339-like, no fractional seconds) 
+ - 2022-01-31T06:30:30.123Z (RFC3339) 
+ - 2022-01-31T01:00:00.123-05:00 (RFC3339) 
+ - 2022-01-31 01:00:00.123-05:0' (RFCC3339 like)
+ - 2022-01-31T06:30:30Z (RFC3339-like)
+ - 2022-01-31 06:30:30.123 (RFC3339-like)
+ - 2022-01-31 06:30:30 ((RFC3339-like, no fractional seconds) 
  - 1567296000000000000 (Unix epoch nanosecond)
 -  1566176400 (Unix epoch second)
 

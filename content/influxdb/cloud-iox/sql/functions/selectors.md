@@ -14,6 +14,9 @@ Selector functions are unique to InfluxDB. They behave like aggregate functions 
 
 Selector functions must be computed using two separate function calls, one for the value and one for time.
 
+Rather than return a value they return a struct.  
+
+The arguments are column to operate on and the second is the time column. 
 
 
 <!-- Selector functions are unique to time series databases.  Like aggregate functions, selector functions are used to reduce the size of your results set.  Unlike aggregates, which return a single modified value based on an aggregate condition, selectors can return multiple rows of values.  For example, selector_min and selector_max can return multiple values if the value is a tie.  Selectors also allow you to group aggregate values by time. -->
