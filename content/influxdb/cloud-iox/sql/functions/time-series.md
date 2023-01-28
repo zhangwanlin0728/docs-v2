@@ -10,38 +10,35 @@ menu:
 weight: 230
 ---
 
-### The NOW() function
 
+## The DATEBIN() function
 
-### The TIME_BUCKET_GAPFILL function
+The `DATE_BIN` function "bins" the input timestamp into a specified time interval.  The DATE_BIN function is constructed in the following manner:
 
-
-```sql
-SELECT time_bucket_gapfill('1 day', time) as day,
-"degrees", "location", "time"
-FROM "h2o_temperature"
-```
-
-
-
-### The DATEBIN() function
-
-The `DATE_BIN` function bins the input timestamp into a specified interval.   
+1. This first argument is the interval you want to window by.  Supported intervals include seconds, minutes, hours, days and years.  
 
 ```sql
-SELECT DATE_BIN(INTERVAL '1' day, time, TIMESTAMP '2022-01-01 00:00:00Z') AS time, COUNT("water_level")  as water_level_count
+SELECT DATE_BIN(INTERVAL '1 day', time, TIMESTAMP '2022-01-01 00:00:00Z') AS time, AVG("water_level")  as water_level_avg
 FROM "h2o_feet"
-WHERE time >= timestamp '2019-09-17T00:00:00Z' AND time <= timestamp '2019-09-19T00:00:00Z'
+WHERE time >= timestamp '2019-09-10T00:00:00Z' AND time <= timestamp '2019-09-20T00:00:00Z'
 GROUP BY 1
 ORDER BY 1 DESC
 ```
 
 Results:
 
-| time                     | water_level_count |
-| :----------------------- | ----------------- |
-| 2019-09-17T00:00:00.000Z | 381               |
-| 2019-09-16T00:00:00.000Z | 2                 |
+| time                     | water_level_avg |
+| :----------------------- | --------------- |
+| 2019-09-17T00:00:00.000Z | 381             |
+| 2019-09-16T00:00:00.000Z | 2               |
+
+
+
+
+
+## The NOW() function
+
+
 
 
 ### The DATE_TRUNC() function
@@ -59,4 +56,18 @@ GROUP BY time
 
 
 
+
+
+
+
+<!-- ## The TIME_BUCKET_GAPFILL function (not working for Jan 31 release)
+
+
+```sql
+SELECT time_bucket_gapfill('1 day', time, TIMESTAMP '2022-01-01 00:00:00Z') as day,
+"degrees", "location", "time"
+FROM "h2o_temperature"
+GROUP BY 1,2
+ORDER BY 1,2
+``` -->
 
