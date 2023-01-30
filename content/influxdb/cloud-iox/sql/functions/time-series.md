@@ -10,12 +10,16 @@ menu:
 weight: 230
 ---
 
+## The NOW() function
 
-## The DATEBIN() function
+
+
+## The DATE_BIN() function
 
 The `DATE_BIN` function "bins" the input timestamp into a specified time interval.  The DATE_BIN function is constructed in the following manner:
 
 1. This first argument is the interval you want to window by.  Supported intervals include seconds, minutes, hours, days and years.  
+2. The second argument is the tiime value or column to operate om
 
 ```sql
 SELECT DATE_BIN(INTERVAL '1 day', time, TIMESTAMP '2022-01-01 00:00:00Z') AS time, AVG("water_level")  as water_level_avg
@@ -36,12 +40,9 @@ Results:
 
 
 
-## The NOW() function
 
 
-
-
-### The DATE_TRUNC() function
+## The DATE_TRUNC() function
 
 
 
