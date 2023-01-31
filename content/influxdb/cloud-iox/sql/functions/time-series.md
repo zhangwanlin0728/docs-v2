@@ -16,23 +16,33 @@ The `NOW` function returns the current date and time.  Use the NOW() function to
 
 Note that return type timestamp looks like this: `2023-01-30T20:48:52.722Z`. The timezone is the server's location.
 
-NOW() function syntax:
+NOW() function basic syntax:
 
 ```
 (time >= now() - interval <'insert_interval')
 ```
 
-
+#### Example
 
 ```sql
 SELECT "water_level", "time"
 FROM h2o_feet
-WHERE time <= now() - interval '20 days'
+WHERE time <= now() - interval '12 minutes'
 ```
+
+Results:
+
+| time                     | water_level |
+| :----------------------- | :---------- |
+| 2019-09-05T00:00:00.000Z | 7.848       |
+| 2019-09-05T00:06:00.000Z | 7.986       |
+| 2019-09-05T00:12:00.000Z | 8.114       |
+
+The query returns `water level` in 12 minutes intervals.
 
 ## The DATE_BIN() function
 
-The `DATE_BIN` function "bins" the input timestamp into a specified time interval.  DATE_BIN syntax looks like this:
+The `DATE_BIN` function "bins" the input timestamp into a specified time interval.  DATE_BIN basic syntax looks like this:
 
 ```sql
 DATE_BIN(INTERVAL <'insert_interval'>, time, TIMESTAMP '<rfc3339_date_time_string>')
@@ -69,25 +79,111 @@ The query returns the timestamp and the average water level for each day within 
 
 ## The DATE_TRUNC() function
 
+The DATE_TRUNC() function truncates a timestamp value based on the specified part of the date.  
+
+The precision supported includes:
+
+ - year
+ - month
+ - week
+ - day
+ - hour
+ - minute
+ - second
+ - millisecond 
+ - nanosecond
+
+
+The first argument specifies the desired precision and the second argument is the time value.  
+
+```sql
+
+-- Basic syntax:
+DATE_TRUNC('precision', column) 
+
+-- Example:
+DATE_TRUNC('minute',time) AS "minute"
+
+```
+#### Examples
+
+```sql
+SELECT
+  AVG(water_level) AS level,
+  DATE_TRUNC('hour',time) AS "hour"
+FROM "h2o_feet"
+WHERE time >= timestamp '2019-09-10T00:00:00Z' AND time <= timestamp '2019-09-12T00:00:00Z'
+GROUP BY hour
+ORDER BY hour
+```
+Results:
+
+| hour                     | level              |
+| :----------------------- | :----------------- |
+| 2019-09-10T00:00:00.000Z | 3.7248000000000006 |
+| 2019-09-10T01:00:00.000Z | 3.8561499999999995 |
+| 2019-09-10T02:00:00.000Z | 4.5405999999999995 |
+| 2019-09-10T03:00:00.000Z | 5.5548072072500005 |
+| 2019-09-10T04:00:00.000Z | 6.433900000000001  |
+| 2019-09-10T05:00:00.000Z | 6.810949999999998  |
+
+The query returns the hourly average `water_level` for the specified time range. Note that the timestamp is also in hour, not nanosecond, format. This is a partial data set.
 
 
 ```sql
-SELECT date_trunc('month',time) AS "date",
-SUM(water_level)
-FROM "h2o_feet"
-GROUP BY time
+SELECT
+	MEAN(water_level) as level,
+    DATE_TRUNC('week',time) AS "week"
+FROM
+	"h2o_feet"
+WHERE time >= timestamp '2019-08-01T00:00:00Z' AND time <= timestamp '2019-10-31T00:00:00Z'
+GROUP BY week
+ORDER BY week
 ```
+Results:
+
+
+| level              | week                     |
+| :----------------- | :----------------------- |
+| 4.3314415259020835 | 2019-08-12T00:00:00.000Z |
+| 4.234838403584523  | 2019-08-19T00:00:00.000Z |
+| 4.4184818559633925 | 2019-08-26T00:00:00.000Z |
+| 4.405153386766021  | 2019-09-02T00:00:00.000Z |
+| 4.725866897257734  | 2019-09-09T00:00:00.000Z |
+| 4.499938596774042  | 2019-09-16T00:00:00.000Z |
+
+
+The query returns the weekly mean `water_level` for the specified time range.  
+
 
 ### The DATE_PART() function
 
+The DATE_PART() function is used to query for subfields from a date or time value. 
 
+The precision supported includes:
 
+ - year
+ - month
+ - week
+ - day
+ - hour
+ - minute
+ - second
+ - millisecond 
+ - nanosecond
+ - dow
+ - doy
 
+```sql
 
+--Basic syntax
+DATE_PART(field, source)
 
-
-
-
+--Examples
+SELECT date_part('hour', TIMESTAMP '2020-03-18 10:21:45') h,
+       date_part('minute', TIMESTAMP '2020-03-18 10:21:45') m,
+       date_part('second', TIMESTAMP '2020-03-18 10:21:45') s;
+```
 
 <!-- ## The TIME_BUCKET_GAPFILL function (not working for Jan 31 release)
 
