@@ -25,7 +25,6 @@ SELECT_clause FROM_clause WHERE <conditional_expression> [(AND|OR) <conditional_
 **Note:** Unlike InfluxQL, SQL **supports** `OR` in the `WHERE` clause to specify multiple time ranges.
 {{% /note %}}
 
-
 ### Examples
 
 Note that single quotes are required for string literals in the `WHERE` clause. 
