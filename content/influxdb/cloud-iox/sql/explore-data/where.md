@@ -22,7 +22,7 @@ SELECT_clause FROM_clause WHERE <conditional_expression> [(AND|OR) <conditional_
 ```
 
 {{% note %}}
-**Note:** Unlike InfluxQL, SQL **supports** `OR` in the `WHERE` clause to specify multiple time ranges.
+**Note:** Unlike InfluxQL, SQL **supports** `OR` in the `WHERE` clause to specify multiple conditions, including time ranges.
 {{% /note %}}
 
 ### Examples
@@ -89,4 +89,20 @@ Results:
 
 The query returns results from a range of greater than or equal to 08-19-2019 at 12 noon and less than or equal to  08-19-2019 at 1:00pm. This is a partial results set.
 
+Select data using the OR operator:
 
+```sql
+SELECT *
+FROM "h2o_feet"
+WHERE "level description" = 'less than 3 feet' OR "water_level" < 2.5
+```
+
+Results;
+| level description | location     | time                     | water_level |
+| :---------------- | :----------- | :----------------------- | :---------- |
+| below 3 feet      | coyote_creek | 2019-08-25T10:06:00.000Z | 2.398       |
+| below 3 feet      | coyote_creek | 2019-08-25T10:12:00.000Z | 2.234       |
+| below 3 feet      | coyote_creek | 2019-08-25T10:18:00.000Z | 2.064       |
+| below 3 feet      | coyote_creek | 2019-08-25T10:24:00.000Z | 1.893       |
+
+The query returns a `level dsescription` of less than 3 feet or `water_level` of less than 2.5 feet. This is a partial results set.
