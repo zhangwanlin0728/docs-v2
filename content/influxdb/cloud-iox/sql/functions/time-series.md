@@ -50,7 +50,9 @@ DATE_BIN(INTERVAL <'insert_interval'>, time, TIMESTAMP '<rfc3339_date_time_strin
 
 The first argument is the interval you want to bin or window by. The second argument is the time value, and can also be a column to operate on.  The third argument is the starting point used to determine window boundaries.
 
-Supported intervals include seconds, minutes, hours, days and years.  
+Supported intervals include seconds, minutes, hours, days, months and years.  
+
+#### Examples
 
 ```sql
 SELECT DATE_BIN(INTERVAL '1 day', time, TIMESTAMP '2022-01-01 00:00:00Z') AS time, AVG("water_level")  as water_level_avg
@@ -76,7 +78,6 @@ Results:
 
 The query returns the timestamp and the average water level for each day within the specified time period.
 
-
 ## The DATE_TRUNC() function
 
 The DATE_TRUNC() function truncates a timestamp value based on the specified part of the date.  
@@ -93,8 +94,7 @@ The precision supported includes:
  - millisecond 
  - nanosecond
 
-
-The first argument specifies the desired precision and the second argument is the time value.  
+The first argument specifies the desired precision and the second argument is the time value.  The second arument is the column name. 
 
 ```sql
 
@@ -158,7 +158,7 @@ The query returns the weekly mean `water_level` for the specified time range.
 
 ### The DATE_PART() function
 
-The DATE_PART() function is used to query for subfields from a date or time value. 
+The DATE_PART() function is used to query for subfields from a date or time value and returns the specified part of the date as an integer.
 
 The precision supported includes:
 
@@ -184,6 +184,24 @@ SELECT date_part('hour', TIMESTAMP '2020-03-18 10:21:45') h,
        date_part('minute', TIMESTAMP '2020-03-18 10:21:45') m,
        date_part('second', TIMESTAMP '2020-03-18 10:21:45') s;
 ```
+
+#### Example
+
+```sql
+SELECT date_part('hour', TIMESTAMP '2019-08-01T10:00:00Z') hour, 
+  "level description", 
+  "location",
+  time
+FROM "h2o_feet"
+WHERE time >= timestamp '2019-08-01T00:00:00Z' AND time <= timestamp '2019-10-31T00:00:00Z'
+ORDER BY time
+```
+
+| hour | level description    | location     | time                     |
+| :--- | :------------------- | :----------- | :----------------------- |
+| 10   | below 3 feet         | santa_monica | 2019-08-17T00:00:00.000Z |
+| 10   | between 6 and 9 feet | coyote_creek | 2019-08-17T00:00:00.000Z |
+| 10   | below 3 feet         | santa_monica | 2019-08-17T00:06:00.000Z |                          
 
 <!-- ## The TIME_BUCKET_GAPFILL function (not working for Jan 31 release)
 
