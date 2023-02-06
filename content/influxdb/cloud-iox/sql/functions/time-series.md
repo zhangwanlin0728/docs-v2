@@ -14,7 +14,7 @@ weight: 230
 
 The `NOW` function returns the current date and time.  Use the NOW() function to query data with timestamps relative to the server's current timestamp.  
 
-Note that return type timestamp looks like this: `2023-01-30T20:48:52.722Z`. The timezone is the server's location.
+Note that the return type timestamp looks like this: `2023-01-30T20:48:52.722Z`. The timezone is the server's location.
 
 NOW() function basic syntax:
 
